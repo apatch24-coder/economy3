@@ -1,0 +1,1150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>물가와 환율, 사례로 이해하기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF3F0; --card:#FFFFFF; --ink:#15222A; --muted:#51616A; --line:#CCD7D1;
+  --green:#1A6A55; --green-soft:#D9EEE5; --gold:#E2A21C; --gold-ink:#8A5A00; --gold-soft:#FCEFCF;
+  --red:#BE3B33; --red-soft:#F9E0DC; --blue:#2A5A9A; --blue-soft:#DCE6F5;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#10181D; --card:#18232A; --ink:#E6EEEA; --muted:#9DAEB5; --line:#2C3C44;
+    --green:#5FC3A0; --green-soft:#183A31; --gold:#F0B93D; --gold-ink:#F3C969; --gold-soft:#3A2F15;
+    --red:#EE7D72; --red-soft:#40211E; --blue:#86AEE8; --blue-soft:#1B2C44;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10181D; --card:#18232A; --ink:#E6EEEA; --muted:#9DAEB5; --line:#2C3C44;
+  --green:#5FC3A0; --green-soft:#183A31; --gold:#F0B93D; --gold-ink:#F3C969; --gold-soft:#3A2F15;
+  --red:#EE7D72; --red-soft:#40211E; --blue:#86AEE8; --blue-soft:#1B2C44;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 130px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;font-size:16px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.display{font-family:"Black Han Sans","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-weight:400;letter-spacing:-0.01em}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+img,svg{max-width:100%}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:14px;padding:12px 0 8px;flex-wrap:wrap}
+.brand{background:none;border:0;padding:0;font-size:20px;color:var(--ink)}
+.parts{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.parts button{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:5px 14px;font-size:14px;font-weight:500}
+.parts button[aria-current="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.steps{display:flex;gap:6px;overflow-x:auto;padding:4px 0 12px;scrollbar-width:thin}
+.steps:empty{display:none}
+.pill{flex:0 0 auto;display:flex;align-items:center;gap:7px;border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:5px 12px 5px 6px;font-size:14px;white-space:nowrap}
+.pill .n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;background:var(--paper);font-weight:700;font-size:13px}
+.pill.done .n{background:var(--green);color:var(--card)}
+.pill[aria-current="step"]{border-color:var(--ink);box-shadow:inset 0 -3px 0 var(--gold)}
+
+/* hero */
+.hero{padding:48px 0 32px}
+.hero h1{font-size:clamp(34px,6.4vw,60px);line-height:1.15;margin:0 0 16px}
+.hero > p{max-width:36em;color:var(--muted);font-size:17px;margin:0 0 32px}
+.doors{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.door{display:flex;flex-direction:column;align-items:flex-start;gap:10px;text-align:left;background:var(--card);border:2px solid var(--ink);border-radius:18px;padding:22px;min-height:250px;transition:transform .15s}
+.door:hover{transform:translateY(-3px)}
+.door-t{font-size:26px;line-height:1.2}
+.door-d{color:var(--muted);font-size:15px;flex:1}
+.door-prog{font-size:13px;font-weight:700;color:var(--green)}
+.ptag{position:relative;display:inline-flex;align-items:baseline;gap:10px;background:var(--gold);color:#2A1D00;padding:6px 16px 6px 30px;border-radius:4px 10px 10px 4px;font-weight:700;font-size:18px;clip-path:polygon(14px 0,100% 0,100% 100%,14px 100%,0 50%)}
+.ptag::before{content:"";position:absolute;left:12px;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:var(--card)}
+.ptag s{font-weight:500;opacity:.65;font-size:15px}
+.board{display:inline-flex;align-items:center;gap:10px;background:#0E2A22;color:#7FF0C3;border-radius:8px;padding:6px 12px;font-variant-numeric:tabular-nums;font-weight:700}
+.board small{color:#B9D9CC;font-weight:500;font-size:12px}
+.board em{color:#FF8A7A;font-style:normal}
+.chain-mini{display:flex;gap:4px;flex-wrap:wrap}
+.chain-mini span{background:var(--blue-soft);color:var(--blue);border-radius:6px;padding:2px 8px;font-size:13px;font-weight:700}
+
+/* step */
+main{padding:28px 0 64px}
+.step-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:22px}
+.step-no{flex:0 0 auto;display:grid;place-items:center;width:52px;height:52px;border-radius:14px;background:var(--ink);color:var(--paper);font-size:28px}
+.step-head h2{font-size:clamp(26px,4.2vw,36px);line-height:1.25;margin:2px 0 8px}
+.lead{margin:0;color:var(--muted);max-width:42em;font-size:16.5px}
+.block{margin:26px 0}
+.block > h3{font-size:18px;margin:0 0 10px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.note{font-size:13.5px;color:var(--muted);margin:10px 0 0}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.three{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.why h3{margin:0 0 4px;font-size:19px}
+.why p{margin:0 0 6px}
+.why.d{border-top:5px solid var(--red)}
+.why.s{border-top:5px solid var(--blue)}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
+.flow span{background:var(--paper);border-radius:8px;padding:3px 10px;font-size:14px;font-weight:500}
+.flow i{font-style:normal;color:var(--muted)}
+.flow .end{background:var(--ink);color:var(--paper)}
+.flow .warn{background:var(--red-soft);color:var(--red)}
+.key{margin-top:34px;border-left:6px solid var(--gold);background:var(--gold-soft);border-radius:0 14px 14px 0;padding:16px 20px}
+.key b{display:block;font-size:14px;color:var(--gold-ink);margin-bottom:2px}
+.key p{margin:0;font-weight:500}
+
+/* sliders */
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px 26px;margin-bottom:18px}
+.ctrls label{display:flex;flex-direction:column;gap:6px;font-weight:500}
+.ctrls label b{font-size:22px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--green);height:28px}
+
+/* basket */
+.basket{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.item{border:1px dashed var(--line);border-radius:12px;padding:10px 12px}
+.item .nm{font-size:14px;color:var(--muted)}
+.item .old{font-size:13px;color:var(--muted);text-decoration:line-through}
+.item .new{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.power{margin-top:18px}
+.power-bar{height:22px;border-radius:6px;background:var(--paper);overflow:hidden;border:1px solid var(--line)}
+.power-bar span{display:block;height:100%;background:var(--green);transition:width .3s}
+.power p{margin:8px 0 0;font-weight:500}
+table{border-collapse:collapse;width:100%;font-size:15px}
+.tbl{overflow-x:auto}
+th,td{border-bottom:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+th{font-size:14px;color:var(--muted);font-weight:700}
+td.up{color:var(--red);font-weight:700}
+td.dn{color:var(--green);font-weight:700}
+
+/* cases (price tags) */
+.cls-help{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 12px;color:var(--muted)}
+.score{font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.case{position:relative;background:var(--card);border:1.5px solid var(--ink);border-radius:6px 16px 16px 6px;padding:16px 16px 16px 36px}
+.case::before{content:"";position:absolute;left:13px;top:22px;width:10px;height:10px;border-radius:50%;border:1.5px solid var(--ink);background:var(--paper)}
+.case.ok{border-color:var(--green);background:linear-gradient(var(--green-soft),var(--green-soft)) left/6px 100% no-repeat,var(--card)}
+.case-t{margin:0 0 12px;font-weight:500}
+.choices{display:flex;flex-wrap:wrap;gap:6px}
+.chip,.opt{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 13px;font-size:14px;font-weight:500;text-align:left}
+.chip:hover:not(:disabled),.opt:hover:not(:disabled){border-color:var(--ink)}
+.chip.right,.opt.right{background:var(--green);border-color:var(--green);color:var(--card)}
+.chip.wrong,.opt.wrong{background:var(--red-soft);border-color:var(--red);color:var(--red);text-decoration:line-through}
+.chip:disabled,.opt:disabled{cursor:default}
+.fb{margin:10px 0 0;font-size:14.5px}
+.fb.good{color:var(--ink)}
+.fb.good::before{content:"정답! ";font-weight:700;color:var(--green)}
+.fb.bad{color:var(--red)}
+
+/* mcq */
+.mcq{border:1.5px solid var(--ink);border-radius:16px;padding:18px;background:var(--card);margin-top:14px}
+.mcq .q{margin:0 0 12px;font-weight:700}
+.mcq .q::before{content:"확인 문제";display:inline-block;margin-right:8px;background:var(--ink);color:var(--paper);font-size:12px;border-radius:6px;padding:1px 8px;vertical-align:2px}
+.opts{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.opt{border-radius:12px}
+
+/* game */
+.meters{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.meter{border-radius:12px;padding:12px;background:var(--paper)}
+.meter small{display:block;color:var(--muted);font-size:13px}
+.meter b{font-size:28px;font-variant-numeric:tabular-nums}
+.meter em{display:block;font-style:normal;font-size:12.5px;color:var(--muted)}
+.meter.alert b{color:var(--red)}
+.meter.good b{color:var(--green)}
+.moves{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.moves button{border:1.5px solid var(--ink);background:var(--card);border-radius:10px;padding:8px 12px;font-weight:700;font-size:14px}
+.moves button.up{background:var(--red-soft)}
+.moves button.dn{background:var(--green-soft)}
+.news{border-left:4px solid var(--blue);padding:4px 0 4px 12px;margin:10px 0;font-size:15px}
+.news b{color:var(--blue)}
+.verdict{border-radius:12px;padding:14px;margin-top:10px;font-weight:500}
+.verdict.win{background:var(--green-soft)}
+.verdict.lose{background:var(--red-soft)}
+.btn{border:0;background:var(--ink);color:var(--paper);border-radius:10px;padding:9px 16px;font-weight:700}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.legend{display:flex;gap:14px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.legend i{display:inline-block;width:12px;height:3px;vertical-align:middle;margin-right:5px}
+
+/* assets */
+.asset h4{margin:0 0 6px;font-size:17px}
+.asset p{margin:0 0 6px;font-size:14.5px}
+.asset .warn{color:var(--muted)}
+.asset .warn::before{content:"주의 ";font-weight:700;color:var(--red)}
+.asset .plus::before{content:"물가 오를 때 ";font-weight:700;color:var(--green)}
+.rows{display:grid;gap:10px}
+.rowc{display:grid;grid-template-columns:110px 1fr 1fr;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:10px}
+.rowc:last-child{border-bottom:0;padding-bottom:0}
+.rowc small{display:block;color:var(--muted);font-size:12.5px}
+.rowc b{font-variant-numeric:tabular-nums;font-size:18px}
+.realrate{margin-top:14px;border-radius:12px;padding:12px 14px;font-weight:500}
+.realrate.neg{background:var(--red-soft)}
+.realrate.pos{background:var(--green-soft)}
+
+/* fx */
+.fxgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:center}
+.big{font-size:clamp(28px,5vw,42px);line-height:1.15;font-variant-numeric:tabular-nums}
+.stat{margin:8px 0;font-size:15.5px}
+.stat b{font-variant-numeric:tabular-nums}
+.status{border-radius:10px;padding:10px 12px;font-weight:500;margin-top:10px}
+.status.up{background:var(--red-soft)}
+.status.dn{background:var(--green-soft)}
+.status.eq{background:var(--paper)}
+#beam{transition:transform .35s ease}
+.analogy{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.analogy div{border:1px dashed var(--line);border-radius:12px;padding:12px;text-align:center}
+.analogy b{display:block;font-size:20px}
+.sdwrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px}
+.sdbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sdbtns button{border:1.5px solid var(--ink);background:var(--card);border-radius:10px;padding:9px 8px;font-weight:700;font-size:14px}
+.sdbtns .d{background:var(--red-soft)}
+.sdbtns .s{background:var(--blue-soft)}
+.sdlog{margin-top:12px;font-size:15px;min-height:4.5em}
+ul.plain{margin:6px 0 0;padding-left:20px}
+ul.plain li{margin:2px 0}
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.ccard{border-radius:14px;padding:14px;border:1.5px solid var(--line);background:var(--card)}
+.ccard h4{margin:0 0 4px;font-size:16px}
+.ccard .v{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.ccard .chg{font-size:13.5px;color:var(--muted)}
+.badge{display:inline-block;border-radius:6px;padding:1px 8px;font-size:13px;font-weight:700;margin-top:6px}
+.badge.g{background:var(--green-soft);color:var(--green)}
+.badge.b{background:var(--red-soft);color:var(--red)}
+.badge.n{background:var(--paper);color:var(--muted)}
+
+/* timeline */
+.tl{position:relative;padding-left:26px}
+.tl::before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:3px;background:var(--line);border-radius:2px}
+.ev{position:relative;margin-bottom:18px}
+.ev::before{content:"";position:absolute;left:-24px;top:16px;width:14px;height:14px;border-radius:50%;background:var(--card);border:3px solid var(--ink)}
+.ev.revealed.up::before{background:var(--red);border-color:var(--red)}
+.ev.revealed.dn::before{background:var(--green);border-color:var(--green)}
+.ev .yr{font-size:24px;line-height:1.2}
+.ev h4{margin:2px 0 6px;font-size:17px}
+.ev p{margin:0 0 10px}
+.res{border-radius:12px;padding:12px 14px;background:var(--paper);margin-top:10px}
+.res .rate{font-weight:700}
+
+/* challenge */
+.scn{border:2px solid var(--ink);border-radius:18px;background:var(--card);overflow:hidden}
+.scn-top{background:var(--ink);color:var(--paper);padding:14px 20px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px}
+.scn-body{padding:20px}
+.scn-news{font-size:19px;font-weight:700;margin:0 0 16px;line-height:1.5}
+.links{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:16px;min-height:30px}
+.links span{background:var(--green-soft);color:var(--green);border-radius:8px;padding:3px 10px;font-size:14px;font-weight:700}
+.links i{font-style:normal;color:var(--muted)}
+.links .todo{background:var(--paper);color:var(--muted);border:1px dashed var(--line)}
+.cq{font-weight:700;margin:0 0 10px}
+.final{text-align:center;padding:10px}
+.final .big{margin:6px 0}
+
+/* profile */
+.me{border:1.5px solid var(--ink);background:var(--gold-soft);border-radius:10px;padding:5px 12px;font-size:14px;font-weight:700}
+.me.empty{background:var(--red-soft);border-style:dashed}
+.pform,.pcard{margin:0 0 26px;max-width:680px}
+.pform{border:2px solid var(--ink)}
+.pform h3{margin:0 0 4px;font-size:19px}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr) 2fr;gap:10px}
+.pgrid label{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:500}
+.pgrid input,.pgrid select{font:inherit;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;width:100%;min-width:0}
+.perr{color:var(--red);font-weight:500;margin:10px 0 0}
+.prow{display:flex;gap:8px;margin-top:14px}
+.pcard{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pcard small{display:block;color:var(--muted);font-size:13px}
+.pcard b{font-size:20px}
+.pstats{display:flex;gap:18px;flex:1;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.pstats strong{display:block;color:var(--ink);font-size:18px}
+.who{font-weight:700;margin:0 0 6px}
+@media (max-width:680px){.pgrid{grid-template-columns:repeat(3,1fr)}.pgrid .wide{grid-column:1/-1}}
+
+/* pager */
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:34px;flex-wrap:wrap}
+.pager button{border:1.5px solid var(--ink);background:var(--card);border-radius:12px;padding:10px 16px;font-weight:700;max-width:100%}
+.pager .nx{background:var(--ink);color:var(--paper);margin-left:auto}
+
+@media (max-width:680px){
+  .fxgrid,.sdwrap{grid-template-columns:1fr}
+  .meters{grid-template-columns:1fr 1fr 1fr;gap:6px}
+  .meter b{font-size:22px}
+  .rowc{grid-template-columns:80px 1fr 1fr}
+  .step-no{width:42px;height:42px;font-size:22px}
+  .hero{padding-top:28px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="bar">
+      <button class="brand display" data-act="home">물가·환율 사례 학습장</button>
+      <nav class="parts" id="parts" aria-label="단원"></nav>
+      <button class="me" id="me" data-act="profile"></button>
+    </div>
+    <nav class="steps" id="steps" aria-label="학습 단계"></nav>
+  </div>
+</header>
+<main class="wrap" id="main"></main>
+
+<script>
+/* ---------- helpers ---------- */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const fmt = n => Math.round(n).toLocaleString('ko-KR');
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const r1 = v => Math.round(v * 10) / 10;
+
+let progress = {};
+try { progress = JSON.parse(localStorage.getItem('pxfx-progress') || '{}') || {}; } catch (e) { progress = {}; }
+function saveProgress() { try { localStorage.setItem('pxfx-progress', JSON.stringify(progress)); } catch (e) {} }
+
+/* ---------- quiz data ---------- */
+const MCQ = {
+  p1q: { q: '물가가 오르면 1만 원의 가치는 어떻게 될까요?', o: ['올라간다', '떨어진다', '변하지 않는다'], a: 1,
+    e: '1만 원이라는 숫자는 그대로지만, 그 돈으로 살 수 있는 상품의 양이 줄어요. 이것을 ‘화폐 가치(구매력)의 하락’이라고 해요.' },
+  p4q: { q: '물가가 너무 빠르게 오를 때 한국은행이 주로 쓰는 방법은?', o: ['기준 금리를 올린다', '기준 금리를 내린다', '돈을 더 찍어 나눠 준다'], a: 0,
+    e: '금리를 올리면 돈을 빌리기 어려워지고 저축이 늘어 소비와 투자가 줄어요. 전체 수요가 줄면서 물가가 안정돼요.' },
+  p6q: { q: '물가 상승률이 4%, 예금 금리가 3%일 때 1년 뒤 예금의 실제 가치는?', o: ['늘어난다', '조금 줄어든다', '변하지 않는다'], a: 1,
+    e: '통장 숫자는 3% 늘지만 물건값이 4% 올랐어요. 실질 금리 ≈ 3% − 4% = −1%, 실제 가치는 약 1% 줄어요.' },
+  p6q2: { q: '한국은행이 기준 금리를 올리면 일반적으로 어떤 일이 생길까요?', o: ['예금 이자가 오르고, 대출 이자 부담도 커진다', '예금 이자가 내리고, 대출받기가 쉬워진다'], a: 0,
+    e: '금리 인상기에는 예금이 상대적으로 매력적이 되고, 돈을 빌린 사람과 기업은 이자 부담이 커져요.' },
+  x1q: { q: '환율이 1달러 = 1,200원에서 1,400원이 되었어요. 옳은 것은?', o: ['원화 가치가 올랐다', '달러 가치가 오르고 원화 가치가 떨어졌다', '두 화폐의 가치가 모두 그대로다'], a: 1,
+    e: '같은 1달러를 사는 데 원화가 200원 더 필요해졌어요. 달러는 비싸지고(가치 상승) 원화는 싸졌어요(가치 하락).' },
+  x1q2: { q: '‘원화 강세’와 같은 뜻은 무엇일까요?', o: ['환율 상승', '환율 하락'], a: 1,
+    e: '원화가 강해진다 = 원화 가치 상승 = 더 적은 원화로 1달러를 살 수 있다 = 환율 하락.' },
+  x2q: { q: '외국인 관광객이 크게 늘면 그래프에서 무엇이 움직일까요?', o: ['외화 수요 곡선이 오른쪽으로', '외화 공급 곡선이 오른쪽으로', '두 곡선 모두 왼쪽으로'], a: 1,
+    e: '관광객이 가져온 달러를 원화로 바꾸면서 시장에 달러가 많아져요. 공급 증가 → 환율 하락.' },
+  x4q: { q: '환율이 1,200원에서 1,500원으로 올랐어요. 가장 반가워할 사람은?', o: ['미국 유학 중인 자녀에게 송금하는 부모', '미국에 화장품을 수출하는 기업', '미국에서 기계를 수입하는 공장'], a: 1,
+    e: '환율이 오르면 우리 상품의 달러 가격이 싸져 해외에서 더 잘 팔리고, 같은 1달러를 원화로 바꿀 때 더 많은 돈을 받아요.' }
+};
+
+const SETS = {
+  cause: {
+    cats: [{ k: 'd', label: '수요 측면' }, { k: 's', label: '공급 측면' }],
+    items: [
+      { t: '여름 휴가철, 바닷가 숙소와 식당 가격이 크게 올랐다.', a: 'd', e: '휴가지 상품을 사려는 사람이 한꺼번에 몰렸어요. 수요가 공급보다 많아진 경우예요.' },
+      { t: '1970년대 석유 파동으로 원유 가격이 몇 배로 뛰자, 공장에서 만드는 물건값이 줄줄이 올랐다.', a: 's', e: '원유는 수많은 상품의 원료이자 에너지예요. 생산 비용이 오른 대표 사례예요.' },
+      { t: '근로자 임금이 크게 올라 동네 식당들이 음식값을 올렸다.', a: 's', e: '임금은 생산 비용이에요. 비용이 오르면 판매 가격도 오르기 쉬워요.' },
+      { t: '경기가 좋아져 사람들의 소득이 늘고, 너도나도 소비를 늘렸다.', a: 'd', e: '사려는 사람이 많아져 전체 수요가 커졌어요.' },
+      { t: '정부가 모든 가구에 지원금을 나눠 주자 짧은 기간에 소비가 크게 늘었다.', a: 'd', e: '시중에 풀린 돈이 한꺼번에 소비로 이어지면 전체 수요가 늘어요.' },
+      { t: '2022년 전쟁의 영향으로 국제 밀과 에너지 가격이 치솟아 빵값과 전기 요금이 올랐다.', a: 's', e: '밀(원자재)과 에너지 가격 상승은 생산 비용을 높여요.' },
+      { t: '폭우와 폭염으로 배추 수확량이 크게 줄어 김치 가격이 올랐다.', a: 's', e: '공급량 자체가 줄어든 경우로, 공급 측면의 원인이에요.' },
+      { t: '환율이 올라 수입 원자재를 사는 데 원화가 더 많이 들게 되었다.', a: 's', e: '환율 상승 → 수입 원자재 가격 상승 → 생산 비용 상승. 2부 환율과 연결되는 사례예요!' },
+      { t: '명절을 앞두고 과일과 고기를 사려는 사람이 시장에 몰렸다.', a: 'd', e: '특정 시기에 수요가 급증한 경우예요.' }
+    ]
+  },
+  who: {
+    cats: [{ k: 'g', label: '유리해진다' }, { k: 'b', label: '불리해진다' }],
+    items: [
+      { t: '은행에서 1억 원을 빌린 사람', a: 'g', e: '갚아야 할 돈의 숫자는 1억 원 그대로인데 돈의 가치가 떨어졌어요. 실제 부담이 줄어요.' },
+      { t: '친구에게 100만 원을 빌려준 사람', a: 'b', e: '돌려받을 돈의 숫자는 같지만, 그 돈으로 살 수 있는 물건이 줄어요.' },
+      { t: '아파트·상가 같은 부동산을 가진 사람', a: 'g', e: '물가와 함께 부동산 가치가 오르고, 임대료도 올려 받을 수 있어요.' },
+      { t: '매달 정해진 금액을 받는 연금 소득자', a: 'b', e: '받는 금액은 고정인데 물건값이 오르니 생활이 빠듯해져요.' },
+      { t: '장롱 속에 현금을 모아 둔 사람', a: 'b', e: '현금은 이자가 없어요. 물가가 오르는 만큼 구매력이 그대로 줄어요.' },
+      { t: '몇 년째 월급이 오르지 않은 직장인', a: 'b', e: '소득 숫자는 그대로인데 물건값이 올라 실질 소득이 줄었어요.' },
+      { t: '금 같은 실물 자산을 가진 사람', a: 'g', e: '실물 자산은 물가와 함께 가격이 오르는 경향이 있어 상대적으로 유리해요.' }
+    ]
+  },
+  actors: {
+    cats: [{ k: 'gov', label: '정부' }, { k: 'bok', label: '한국은행' }, { k: 'firm', label: '기업' }, { k: 'home', label: '가계(국민)' }],
+    items: [
+      { t: '기준 금리를 올려 시중에 도는 돈의 양을 줄인다.', a: 'bok', e: '기준 금리 결정은 우리나라 중앙은행인 한국은행의 역할이에요.' },
+      { t: '전기·가스·교통 같은 공공요금 인상을 늦추거나 억제한다.', a: 'gov', e: '공공요금 관리는 정부의 대표적인 물가 안정 정책이에요.' },
+      { t: '꼭 필요한 물건 위주로 계획을 세워 사고, 과소비를 자제한다.', a: 'home', e: '가계가 과소비를 줄이면 전체 수요가 줄어 물가 안정에 도움이 돼요.' },
+      { t: '새로운 기술을 개발해 생산 비용을 낮춘다.', a: 'firm', e: '기업의 기술 개발로 비용이 낮아지면 가격을 올리지 않아도 돼요.' },
+      { t: '가격이 크게 오른 농산물의 비축 물량을 시장에 풀고, 수입 관세를 낮춘다.', a: 'gov', e: '공급을 늘려 가격을 안정시키는 정부 정책이에요.' },
+      { t: '원가 부담을 스스로 줄이며 제품 가격 인상을 자제한다.', a: 'firm', e: '가격 인상 자제는 외환 위기 때도 기업들이 함께한 노력이에요.' },
+      { t: '물가가 오를 것 같다고 미리 물건을 사재기하지 않는다.', a: 'home', e: '사재기는 수요를 더 키워 물가를 더 올려요.' },
+      { t: '‘소비자 물가 상승률 2%’를 목표로 정하고 이를 지키려 노력한다.', a: 'bok', e: '한국은행은 물가 안정 목표(2%)를 정해 통화 정책을 운용해요.' }
+    ]
+  },
+  fx: {
+    cats: [{ k: 'dU', label: '외화 수요 증가 → 환율 상승' }, { k: 'sU', label: '외화 공급 증가 → 환율 하락' }],
+    items: [
+      { t: '여름 방학에 해외여행을 떠나는 사람이 크게 늘었다.', a: 'dU', e: '여행 경비로 쓸 달러를 사야 해요. 달러가 나라 밖으로 나가는 쪽이에요.' },
+      { t: '우리나라 반도체 수출이 크게 늘었다.', a: 'sU', e: '수출 기업이 받은 달러를 원화로 바꾸면서 외화가 들어와요.' },
+      { t: 'K-팝 공연을 보러 온 외국인 관광객이 크게 늘었다.', a: 'sU', e: '관광객이 한국에서 쓰려고 달러를 원화로 바꿔요.' },
+      { t: '미국에서 공부하는 자녀에게 보내는 송금이 늘었다.', a: 'dU', e: '송금하려면 원화를 달러로 바꿔야 해요.' },
+      { t: '국제 유가가 올라 원유 수입 대금이 크게 늘었다.', a: 'dU', e: '수입 대금은 달러로 치르므로 외화 수요가 늘어요.' },
+      { t: '외국 기업이 한국에 큰 공장을 짓기 위해 투자했다.', a: 'sU', e: '외국 자본(달러)이 국내로 들어와요.' },
+      { t: '외국인 투자자들이 한국 주식을 팔고 그 돈을 달러로 바꿔 떠났다.', a: 'dU', e: '원화를 달러로 바꾸려는 수요가 늘어 환율이 올라요. 금융 위기 때 자주 나타나요.' },
+      { t: '한국 드라마 방송 판권이 해외에 비싸게 팔렸다.', a: 'sU', e: '문화 콘텐츠 같은 서비스도 국제 거래 대상이에요. 판매 대금이 달러로 들어와요.' },
+      { t: '우리 기업이 해외에 공장을 세우려고 달러를 마련했다.', a: 'dU', e: '해외 투자에 쓸 달러가 필요해요.' }
+    ]
+  }
+};
+
+const TIMELINE = [
+  { y: '1997', h: '외환 위기', s: '기업들이 외국에서 빌린 달러를 갚지 못하고, 외국인 투자자들이 한꺼번에 돈을 빼 가면서 우리나라에 달러가 크게 부족해졌어요.', a: 'up',
+    r: '1997년 초 800원대였던 환율이 그해 12월 한때 1,900원대 후반까지 치솟았어요. 원화 가치가 절반 가까이 떨어졌어요.',
+    l: '우리나라는 IMF(국제 통화 기금)에 구제 금융을 요청했고, 기업 부도와 구조 조정으로 1998년 실업률이 약 7%까지 올랐어요. 수입품 가격이 뛰어 물가도 크게 올랐어요.' },
+  { y: '2007', h: '원화 강세', s: '수출이 잘되고 외국인 투자 자금이 많이 들어와 국내에 달러가 넘쳐 났어요.', a: 'dn',
+    r: '환율이 한때 900원 근처까지 내려갔어요.',
+    l: '해외여행과 유학 비용이 상대적으로 줄어 해외로 나가는 사람이 늘었어요. 반면 수출 기업은 해외 판매 가격이 올라 경쟁력이 떨어질까 걱정했어요.' },
+  { y: '2008', h: '글로벌 금융 위기', s: '미국에서 시작된 금융 위기로 외국인 투자자들이 위험을 피해 한국 주식과 채권을 팔고 달러를 가져갔어요.', a: 'up',
+    r: '2009년 3월 환율이 약 1,570원까지 올랐어요.',
+    l: '수입 물가가 뛰고, 달러로 빚을 진 기업들의 상환 부담이 커졌어요. 유학생 가정도 송금 부담이 크게 늘었어요.' },
+  { y: '2014', h: '흑자 속 원화 강세', s: '수출이 수입보다 많은 상태(경상 수지 흑자)가 이어지며 벌어들인 달러가 꾸준히 들어왔어요.', a: 'dn',
+    r: '2014년 7월 환율이 약 1,010원까지 내려갔어요.',
+    l: '해외 직구와 해외여행이 늘었고, 수출 기업은 달러를 원화로 바꿀 때 받는 돈이 줄어 이익이 줄 것을 걱정했어요.' },
+  { y: '2022', h: '미국의 급격한 금리 인상', s: '미국이 높은 물가를 잡으려고 기준 금리를 빠르게 올리자, 이자를 더 주는 미국으로 전 세계 돈이 몰렸어요.', a: 'up',
+    r: '2022년 10월 환율이 약 1,440원까지 올랐어요.',
+    l: '원유·곡물 같은 수입품이 원화로 더 비싸져 국내 물가 상승을 부추겼어요. 한국은행도 물가를 잡기 위해 기준 금리를 잇따라 올렸어요. 1부의 물가·금리 이야기와 이어지는 사례예요.' }
+];
+
+const CHALLENGE = [
+  { t: '미국이 물가를 잡으려고 기준 금리를 크게 올렸다. 외국인 투자자들이 한국 주식을 팔고, 그 돈을 달러로 바꿔 미국으로 옮겼다.', qs: [
+    { q: '외환 시장에서는 무슨 일이 생길까?', o: ['외화 수요 증가', '외화 공급 증가'], a: 0, s: '외화 수요↑', e: '원화를 팔고 달러를 사려는 사람이 많아졌어요.' },
+    { q: '그러면 환율은?', o: ['상승', '하락'], a: 0, s: '환율↑', e: '외화 수요가 늘면 달러의 가격, 곧 환율이 올라요.' },
+    { q: '원화 가치는?', o: ['상승', '하락'], a: 1, s: '원화 가치↓', e: '1달러를 사는 데 원화가 더 많이 필요해졌으니 원화 가치는 떨어졌어요.' },
+    { q: '우리나라 물가에는 어떤 영향을 줄까?', o: ['수입품 가격이 올라 물가 상승 압력이 커진다', '수입품 가격이 내려 물가가 안정된다'], a: 0, s: '물가↑ 압력', e: '원유·곡물 같은 수입품을 원화로 더 비싸게 사야 해요. 2022년에 실제로 일어난 일이에요.' }
+  ] },
+  { t: '우리나라 반도체와 자동차 수출이 사상 최대를 기록했다.', qs: [
+    { q: '외환 시장에서는 무슨 일이 생길까?', o: ['외화 수요 증가', '외화 공급 증가'], a: 1, s: '외화 공급↑', e: '수출 대금으로 받은 달러가 국내로 들어와요.' },
+    { q: '그러면 환율은?', o: ['상승', '하락'], a: 1, s: '환율↓', e: '시장에 달러가 많아지면 달러의 가격이 내려가요.' },
+    { q: '원화 가치는?', o: ['상승', '하락'], a: 0, s: '원화 가치↑', e: '더 적은 원화로 1달러를 살 수 있으니 원화 가치가 올랐어요.' },
+    { q: '이때 상대적으로 웃는 사람은?', o: ['미국 여행을 계획한 가족', '해외에 물건을 파는 수출 기업'], a: 0, s: '해외여행 유리', e: '환율이 내리면 해외여행 비용이 줄어요. 반대로 수출 기업은 해외 판매 가격이 올라 경쟁력이 떨어질 수 있어요.' }
+  ] },
+  { t: '중동 지역 분쟁으로 국제 유가가 두 배로 뛰었다.', qs: [
+    { q: '이 상황에서 물가가 오르는 원인은?', o: ['수요 측면', '공급 측면 (생산 비용 상승)'], a: 1, s: '비용↑ → 물가↑', e: '원유는 많은 상품의 원료이자 에너지예요. 생산 비용이 올라요.' },
+    { q: '원유 수입 대금을 치르기 위한 외화 수요는?', o: ['증가 → 환율 상승', '감소 → 환율 하락'], a: 0, s: '환율↑', e: '같은 양의 원유를 사려면 더 많은 달러가 필요해요.' },
+    { q: '물가를 잡기 위해 한국은행이 할 수 있는 일은?', o: ['기준 금리 인상', '기준 금리 인하'], a: 0, s: '금리 인상', e: '금리를 올리면 소비와 투자가 줄어 물가 압력을 낮출 수 있어요. 다만 경기가 위축될 수 있어 신중해야 해요.' },
+    { q: '가계의 현명한 대응은?', o: ['기름값이 더 오르기 전에 사재기한다', '대중교통을 이용하고 에너지를 아껴 쓴다'], a: 1, s: '절약·과소비 자제', e: '사재기는 수요를 키워 물가를 더 올려요.' }
+  ] },
+  { t: '물가 상승률이 5%인데, 은행 예금 금리는 3%에 머물러 있다.', qs: [
+    { q: '예금의 실질 금리는 대략 얼마일까?', o: ['+8%', '+2%', '−2%'], a: 2, s: '실질 금리 −2%', e: '실질 금리 ≈ 예금 금리 − 물가 상승률 = 3% − 5% = −2%.' },
+    { q: '100만 원을 1년 동안 현금으로 두면?', o: ['구매력이 약 5% 줄어든다', '구매력이 그대로다'], a: 0, s: '현금 구매력↓', e: '현금은 이자가 없으니 물가가 오른 만큼 살 수 있는 양이 줄어요.' },
+    { q: '이 상황에서 상대적으로 유리한 사람은?', o: ['돈을 빌려준 사람', '돈을 빌린 사람'], a: 1, s: '빌린 사람 유리', e: '갚을 돈의 숫자는 그대로인데 돈의 가치가 떨어져 실제 부담이 줄어요.' }
+  ] },
+  { t: 'K-팝 월드 투어 덕분에 한국을 찾는 외국인 관광객이 크게 늘었다.', qs: [
+    { q: '외환 시장에서는 무슨 일이 생길까?', o: ['외화 수요 증가', '외화 공급 증가'], a: 1, s: '외화 공급↑', e: '관광객들이 달러를 원화로 바꿔 써요.' },
+    { q: '그러면 환율은?', o: ['상승', '하락'], a: 1, s: '환율↓', e: '달러가 많아지면 달러의 가격이 내려가요.' },
+    { q: '원화 가치는?', o: ['상승', '하락'], a: 0, s: '원화 가치↑', e: '원화를 찾는 사람이 많아졌어요.' },
+    { q: '밀가루를 수입해 빵을 만드는 국내 공장의 비용은?', o: ['늘어난다', '줄어든다'], a: 1, s: '수입 원가↓', e: '환율이 내리면 같은 양의 수입 밀가루를 더 적은 원화로 살 수 있어요.' }
+  ] }
+];
+
+/* ---------- step definitions ---------- */
+const PARTS = [
+  { name: '1부 물가 상승', short: '물가 상승', steps: [
+    { id: 'p1', t: '물가란?', h: '같은 만 원, 줄어드는 장바구니',
+      lead: '물가는 여러 상품의 가격을 종합한 평균적인 가격 수준이에요. 물가가 오르면 같은 돈으로 살 수 있는 물건이 줄어들어요.',
+      key: '물가 상승 = 화폐 가치 하락. 돈의 숫자는 그대로여도 살 수 있는 물건이 줄어들어요.',
+      body: bodyP1, mount: mountP1 },
+    { id: 'p2', t: '왜 오를까?', h: '물가는 왜 오를까?',
+      lead: '물가 상승의 원인은 크게 두 가지예요. 사려는 사람이 많아지는 수요 측면, 그리고 만드는 비용이 올라가는 공급 측면이에요.',
+      key: '휴가철·명절처럼 사려는 사람이 몰리면 수요 측면, 석유 파동·임금 상승처럼 만드는 비용이 오르거나 공급이 줄면 공급 측면이에요.',
+      body: bodyP2 },
+    { id: 'p3', t: '누가 웃고 울까?', h: '물가가 오르면 누가 웃고 누가 울까?',
+      lead: '물가가 오르면 돈의 가치가 떨어져요. 그래서 ‘정해진 금액의 돈’을 가진 사람과 ‘물건(실물)’을 가진 사람의 처지가 달라져요.',
+      key: '돈을 빌린 사람·실물 자산을 가진 사람은 상대적으로 유리하고, 돈을 빌려준 사람·연금 소득자·현금 보유자는 불리해요. 이것을 ‘부와 소득의 불공평한 재분배’라고 해요.',
+      body: bodyP3 },
+    { id: 'p4', t: '금리 조절실', h: '내가 한국은행 총재라면?',
+      lead: '물가가 너무 빨리 오르면 중앙은행인 한국은행은 기준 금리를 올려요. 금리가 어떤 길을 따라 물가에 영향을 주는지 보고, 직접 금리를 결정해 보세요.',
+      key: '물가가 너무 오르면 기준 금리를 올리고, 경기가 너무 나쁘면 내려요. 금리를 올리면 물가는 잡히지만 경기가 식고 실업이 늘 수 있어서 ‘얼마나, 언제’가 어려운 문제예요.',
+      body: bodyP4, mount: mountP4 },
+    { id: 'p5', t: '모두의 역할', h: '물가를 잡는 네 주체',
+      lead: '물가 안정은 한 사람의 힘으로 되지 않아요. 정부, 한국은행, 기업, 가계가 각자 할 일이 있어요. 각 행동을 누가 하는지 골라 보세요.',
+      key: '정부: 공공요금 관리·공급 확대·물가 안정 정책 / 한국은행: 기준 금리 조절 / 기업: 기술 개발·원가 절감·가격 인상 자제 / 가계: 과소비 자제·합리적 소비.',
+      body: bodyP5 },
+    { id: 'p6', t: '내 돈 지키기', h: '물가가 오를 때, 내 돈은 어디에?',
+      lead: '물가가 오르면 가만히 둔 돈은 조금씩 가치가 줄어요. 그래서 사람들은 돈의 ‘실제 가치’를 지킬 방법을 고민해요. 먼저 숫자로 확인해 볼까요?',
+      key: '실질 금리 ≈ 예금 금리 − 물가 상승률. 물가가 오를 때는 이 값을 따져 보고, 안전성·수익성·유동성을 고려해 여러 곳에 나누어 담는 것이 기본이에요.',
+      body: bodyP6, mount: mountP6 }
+  ] },
+  { name: '2부 환율', short: '환율', steps: [
+    { id: 'x1', t: '환율이란?', h: '환율은 ‘달러의 가격표’',
+      lead: '환율은 우리 돈과 외국 돈을 바꾸는 비율이에요. 우리나라는 외국 돈 1단위를 기준으로 나타내요. ‘1달러 = 1,300원’은 달러 한 장의 가격이 1,300원이라는 뜻이에요.',
+      key: '환율 = 외화의 가격. 환율 상승 = 달러가 비싸짐 = 원화 가치 하락(원화 약세). 환율 하락 = 원화 가치 상승(원화 강세). 둘은 시소처럼 반대로 움직여요.',
+      body: bodyX1, mount: mountX1 },
+    { id: 'x2', t: '환율의 결정', h: '환율은 어떻게 정해질까?',
+      lead: '환율도 사과 값처럼 외환 시장의 수요와 공급으로 정해져요. 외화가 필요한 사람(수요)과 외화를 가져오는 사람(공급)이 만나는 곳에서 환율이 결정돼요.',
+      key: '다른 조건이 같을 때, 외화 수요 증가 → 환율 상승 / 외화 공급 증가 → 환율 하락.',
+      body: bodyX2, mount: mountX2 },
+    { id: 'x3', t: '사례 분류', h: '이 뉴스, 달러가 나가나 들어오나?',
+      lead: '뉴스 속 사건이 외환 시장의 수요와 공급 중 어디를 움직이는지 판단해 보세요. ‘달러가 나라 밖으로 나가나, 안으로 들어오나?’를 생각하면 쉬워요.',
+      key: '달러가 필요해 나가면(수입·여행·유학·해외 투자) 외화 수요↑ → 환율↑. 달러가 들어오면(수출·관광객·외국인 투자) 외화 공급↑ → 환율↓.',
+      body: () => clsHTML('fx') },
+    { id: 'x4', t: '누가 유리할까?', h: '환율이 움직이면 누가 웃을까?',
+      lead: '환율이 움직이면 누군가는 웃고 누군가는 울어요. 환율을 직접 움직이며 네 사람의 처지를 비교해 보세요.',
+      key: '환율 상승: 수출 유리, 수입·해외여행·유학·외채 상환은 불리, 국내 물가 상승 압력. 환율 하락: 그 반대예요.',
+      body: bodyX4, mount: mountX4 },
+    { id: 'x5', t: '역사 속 환율', h: '실제 역사 속 환율',
+      lead: '실제 사건을 읽고, 그때 환율이 올랐을지 내렸을지 먼저 예측해 보세요. 그다음 실제로 무슨 일이 있었는지 확인해요.',
+      key: '위기가 닥쳐 달러가 빠져나가면 환율이 오르고, 수출이 잘돼 달러가 들어오면 환율이 내려요. 환율은 물가·금리·실업과도 이어져 있어요.',
+      body: bodyX5 }
+  ] },
+  { name: '종합 챌린지', short: '종합 챌린지', steps: [
+    { id: 'c1', t: '연쇄 추론', h: '뉴스 하나, 생각의 사슬 네 고리',
+      lead: '하나의 뉴스가 외환 시장, 환율, 원화 가치, 물가와 우리 생활까지 어떻게 이어지는지 차례로 추론해 보세요. 물가와 환율을 함께 생각해야 풀 수 있어요.',
+      key: '경제는 사슬처럼 이어져 있어요. ‘누가 달러를 사고파나 → 환율 → 원화 가치 → 수입품 가격 → 물가 → 금리’ 순서로 따라가면 길을 잃지 않아요.',
+      body: bodyC1, mount: mountC1 }
+  ] }
+];
+
+let cur = { p: -1, s: 0 };
+
+/* ---------- shell rendering ---------- */
+/* ---------- student profile ---------- */
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let profile = null;
+try { profile = JSON.parse(localStorage.getItem('pxfx-profile') || 'null'); } catch (e) { profile = null; }
+let editingProfile = false;
+function saveProfile() { try { localStorage.setItem('pxfx-profile', JSON.stringify(profile)); } catch (e) {} }
+function profileLabel() { return profile ? `${profile.g}학년 ${profile.c}반 ${profile.n}번 ${profile.name}` : ''; }
+function renderMe() {
+  const b = $('#me');
+  b.textContent = profile ? profileLabel() : '내 정보 입력';
+  b.classList.toggle('empty', !profile);
+}
+function profileForm() {
+  const p = profile || { g: '', c: '', n: '', name: '' };
+  return `<div class="panel pform" id="pform">
+    <h3>내 정보 입력</h3>
+    <p class="note" style="margin:0 0 12px">학습을 시작하기 전에 학년, 반, 번호, 이름을 적어 주세요. 정보는 이 기기에만 저장돼요.</p>
+    <div class="pgrid">
+      <label>학년<select id="pg"><option value="">선택</option>${[1, 2, 3].map(v => `<option value="${v}" ${String(p.g) === String(v) ? 'selected' : ''}>${v}학년</option>`).join('')}</select></label>
+      <label>반<input id="pc" type="number" min="1" max="30" inputmode="numeric" value="${esc(p.c)}"></label>
+      <label>번호<input id="pn" type="number" min="1" max="60" inputmode="numeric" value="${esc(p.n)}"></label>
+      <label class="wide">이름<input id="pname" type="text" maxlength="20" autocomplete="off" value="${esc(p.name)}"></label>
+    </div>
+    <p class="perr" id="perr" hidden></p>
+    <div class="prow"><button class="btn" data-act="psave">저장하기</button>${profile ? '<button class="btn ghost" data-act="pcancel">취소</button>' : ''}</div>
+  </div>`;
+}
+function meBlock() {
+  if (!profile || editingProfile) return profileForm();
+  const total = PARTS.reduce((a, p) => a + p.steps.length, 0);
+  const done = PARTS.reduce((a, p, i) => a + partDone(i), 0);
+  const best = progress.chBest != null ? `${progress.chBest} / ${CH_TOTAL}` : '아직 안 함';
+  return `<div class="panel pcard">
+    <div><small>학습자</small><b>${esc(profileLabel())}</b></div>
+    <div class="pstats"><span>완료한 단계<strong>${done} / ${total}</strong></span><span>챌린지 최고 점수<strong>${best}</strong></span></div>
+    <button class="btn ghost" data-act="pedit">정보 수정</button>
+  </div>`;
+}
+function openProfile(msg) {
+  cur = { p: -1, s: 0 }; editingProfile = true; renderStep();
+  if (msg) { const er = $('#perr'); er.hidden = false; er.textContent = msg; }
+  const f = ['#pg', '#pc', '#pn', '#pname'].find(s => !$(s).value) || '#pname';
+  $(f).focus();
+  $('#pform').scrollIntoView({ block: 'center' });
+}
+function doSave() {
+  const g = $('#pg').value, c = $('#pc').value.trim(), n = $('#pn').value.trim(), name = $('#pname').value.trim();
+  if (!g || !c || !n || !name) {
+    const er = $('#perr'); er.hidden = false; er.textContent = '학년, 반, 번호, 이름을 모두 입력해 주세요.';
+    const f = [['#pg', g], ['#pc', c], ['#pn', n], ['#pname', name]].find(x => !x[1]); if (f) $(f[0]).focus();
+    return;
+  }
+  profile = { g, c, n, name }; saveProfile(); editingProfile = false; renderStep();
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.closest && e.target.closest('#pform') && e.target.tagName !== 'BUTTON') { e.preventDefault(); doSave(); }
+});
+
+function partDone(pi) { return PARTS[pi].steps.filter(s => progress[s.id]).length; }
+
+function renderNav() {
+  renderMe();
+  $('#parts').innerHTML = PARTS.map((p, i) =>
+    `<button data-act="part" data-p="${i}" aria-current="${cur.p === i}">${p.short}</button>`).join('');
+  if (cur.p < 0) { $('#steps').innerHTML = ''; return; }
+  $('#steps').innerHTML = PARTS[cur.p].steps.map((s, i) =>
+    `<button class="pill ${progress[s.id] ? 'done' : ''}" data-act="go" data-p="${cur.p}" data-s="${i}" ${cur.s === i ? 'aria-current="step"' : ''}>
+      <span class="n">${progress[s.id] ? '✓' : i + 1}</span>${s.t}</button>`).join('');
+  const a = $('#steps [aria-current="step"]');
+  if (a) a.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+}
+
+function renderHome() {
+  const d = i => `${partDone(i)} / ${PARTS[i].steps.length} 완료`;
+  $('#main').innerHTML = `
+  <section class="hero">
+    <h1 class="display">물가는 왜 오르고,<br>환율은 왜 움직일까?</h1>
+    <p>교과서 개념을 실제 사례에 하나씩 적용하며 익히는 학습장이에요. 1부부터 차례로 해도 좋고, 헷갈리는 부분부터 골라 시작해도 좋아요.</p>
+    ${meBlock()}
+    <div class="doors">
+      <button class="door" data-act="part" data-p="0">
+        <span class="ptag"><s>₩1,000</s>₩1,300</span>
+        <span class="door-t display">1부 물가 상승</span>
+        <span class="door-d">물가의 뜻과 원인, 누가 유리하고 불리한지, 금리를 움직이는 한국은행과 정부·기업·가계의 역할, 그리고 내 돈 지키기.</span>
+        <span class="door-prog">${d(0)}</span>
+      </button>
+      <button class="door" data-act="part" data-p="1">
+        <span class="board"><small>1달러</small>1,300.00원<em>▲</em></span>
+        <span class="door-t display">2부 환율</span>
+        <span class="door-d">환율의 뜻, 환율과 원화 가치가 반대로 움직이는 이유, 수요·공급으로 정해지는 원리, 실제 역사 속 환율.</span>
+        <span class="door-prog">${d(1)}</span>
+      </button>
+      <button class="door" data-act="part" data-p="2">
+        <span class="chain-mini"><span>뉴스</span><span>환율</span><span>원화</span><span>물가</span></span>
+        <span class="door-t display">종합 챌린지</span>
+        <span class="door-d">하나의 뉴스에서 출발해 환율, 원화 가치, 물가, 우리 생활까지 생각의 사슬을 이어 가는 연쇄 추론 문제.</span>
+        <span class="door-prog">${d(2)}</span>
+      </button>
+    </div>
+  </section>`;
+}
+
+function renderStep() {
+  if (cur.p < 0) { renderNav(); renderHome(); return; }
+  const P = PARTS[cur.p], S = P.steps[cur.s];
+  const prev = cur.s > 0 ? P.steps[cur.s - 1] : (cur.p > 0 ? PARTS[cur.p - 1].steps.at(-1) : null);
+  const next = cur.s < P.steps.length - 1 ? P.steps[cur.s + 1] : (cur.p < PARTS.length - 1 ? PARTS[cur.p + 1].steps[0] : null);
+  $('#main').innerHTML = `
+    <section>
+      <div class="step-head"><span class="step-no display">${cur.s + 1}</span>
+        <div><h2 class="display">${S.h}</h2><p class="lead">${S.lead}</p></div></div>
+      ${S.body()}
+      <div class="key"><b>핵심 정리</b><p>${S.key}</p></div>
+      <nav class="pager">
+        ${prev ? `<button data-act="prev">이전: ${prev.t}</button>` : ''}
+        ${next ? `<button class="nx" data-act="next">다음: ${next.t}</button>` : `<button class="nx" data-act="home">처음 화면으로</button>`}
+      </nav>
+    </section>`;
+  renderNav();
+  if (S.mount) S.mount();
+  window.scrollTo({ top: 0 });
+}
+
+function go(p, s) { cur = { p, s }; renderStep(); }
+function stepId() { return cur.p < 0 ? null : PARTS[cur.p].steps[cur.s].id; }
+function checkStep() {
+  const req = $$('#main .req');
+  if (req.length && req.every(el => el.classList.contains('solved'))) {
+    const id = stepId();
+    if (id && !progress[id]) { progress[id] = true; saveProgress(); renderNav(); }
+  }
+}
+
+/* ---------- shared components ---------- */
+function mcqHTML(id) {
+  const m = MCQ[id];
+  return `<div class="mcq req" data-q="${id}"><p class="q">${m.q}</p>
+    <div class="opts">${m.o.map((o, i) => `<button class="opt" data-i="${i}">${o}</button>`).join('')}</div>
+    <p class="fb" hidden></p></div>`;
+}
+function clsHTML(id) {
+  const s = SETS[id];
+  return `<div class="block cls req" data-set="${id}">
+    <p class="cls-help"><span>사례를 읽고 알맞은 쪽을 고르세요. 틀리면 다시 고를 수 있어요.</span><span class="score">0 / ${s.items.length}</span></p>
+    <div class="cases">${s.items.map((it, i) => `
+      <article class="case" data-i="${i}">
+        <p class="case-t">${it.t}</p>
+        <div class="choices">${s.cats.map(c => `<button class="chip" data-c="${c.k}">${c.label}</button>`).join('')}</div>
+        <p class="fb" hidden></p>
+      </article>`).join('')}</div></div>`;
+}
+
+/* ---------- P1 ---------- */
+const BASKET = [['라면 1봉지', 1000], ['우유 1팩', 2900], ['버스 요금', 1500], ['떡볶이 1인분', 4500], ['햄버거 세트', 7500], ['영화 관람', 15000]];
+function bodyP1() {
+  return `
+  <div class="block panel">
+    <div class="ctrls">
+      <label>연평균 물가 상승률 <b id="p1r">3%</b><input type="range" id="p1rate" min="0" max="10" step="0.5" value="3" aria-label="연평균 물가 상승률"></label>
+      <label>흐른 시간 <b id="p1y">10년</b><input type="range" id="p1yrs" min="0" max="20" step="1" value="10" aria-label="흐른 시간"></label>
+    </div>
+    <div class="basket" id="p1basket"></div>
+    <div class="power">
+      <div class="power-bar" aria-hidden="true"><span id="p1bar"></span></div>
+      <p id="p1msg"></p>
+    </div>
+    <p class="note">오늘 가격은 학습용 예시예요. 모든 상품이 같은 비율로 오른다고 가정했어요.</p>
+  </div>
+  <div class="block">
+    <h3>실제로는 상품마다 오르는 정도가 달라요</h3>
+    <p>교과서 속 학생이 조사한 5년 전과 지금의 가격이에요. 물가는 이렇게 제각각 오르는 여러 상품의 가격을 <b>종합한 평균</b>이에요.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>상품</th><th>5년 전</th><th>현재</th><th>상승률</th></tr></thead>
+      <tbody>
+        <tr><td>햄버거 세트</td><td>5,200원</td><td>5,400원</td><td class="up">약 3.8%</td></tr>
+        <tr><td>과자</td><td>900원</td><td>1,000원</td><td class="up">약 11.1%</td></tr>
+        <tr><td>생크림 케이크</td><td>24,000원</td><td>25,000원</td><td class="up">약 4.2%</td></tr>
+      </tbody></table></div>
+  </div>
+  ${mcqHTML('p1q')}`;
+}
+function mountP1() {
+  const upd = () => {
+    const r = +$('#p1rate').value, y = +$('#p1yrs').value, f = Math.pow(1 + r / 100, y);
+    $('#p1r').textContent = r + '%'; $('#p1y').textContent = y + '년';
+    $('#p1basket').innerHTML = BASKET.map(([n, p]) => `
+      <div class="item"><div class="nm">${n}</div><div class="old">${y ? '지금 ' + fmt(p) + '원' : '&nbsp;'}</div>
+      <div class="new">${fmt(Math.round(p * f / 10) * 10)}원</div></div>`).join('');
+    const pct = 100 / f;
+    $('#p1bar').style.width = pct + '%';
+    $('#p1msg').innerHTML = y === 0 || r === 0
+      ? '지금의 1만 원은 1만 원어치 물건을 살 수 있어요. 슬라이더를 움직여 보세요.'
+      : `${y}년 뒤 물건값은 지금의 <b>${f.toFixed(2)}배</b>. 그때의 1만 원으로는 지금 기준 <b>약 ${fmt(10000 / f)}원어치</b>만 살 수 있어요. 구매력이 ${fmt(100 - pct)}% 줄었어요.`;
+  };
+  $('#p1rate').addEventListener('input', upd);
+  $('#p1yrs').addEventListener('input', upd);
+  upd();
+}
+
+/* ---------- P2 ---------- */
+function bodyP2() {
+  return `
+  <div class="block two">
+    <div class="panel why d"><h3>수요 측면</h3><p>재화와 서비스에 대한 전체 수요가 공급보다 많을 때</p>
+      <div class="flow"><span>사려는 사람↑</span><i>→</i><span>물건이 모자람</span><i>→</i><span class="end">가격↑</span></div></div>
+    <div class="panel why s"><h3>공급 측면</h3><p>임금, 원자재 가격 같은 생산 비용이 오를 때 (공급이 줄 때)</p>
+      <div class="flow"><span>생산 비용↑</span><i>→</i><span>판매 가격↑</span><i>→</i><span class="end">물가↑</span></div></div>
+  </div>
+  ${clsHTML('cause')}
+  <div class="block panel">
+    <h3 style="margin-top:0">1970년대 석유 파동, 그때 사람들은?</h3>
+    <p style="margin:0">기름값이 너무 비싸 학교에 임시 휴교령이 내리기도 했고, 차량 2부제가 시행되었어요. 전기를 아끼려고 상점의 밤 영업도 제한했어요. 공장들은 생산을 줄였고, 물가는 오르는데 일자리는 줄어 실업률까지 높아졌어요. 공급 측면의 물가 상승이 생활 전체를 흔든 사례예요.</p>
+  </div>`;
+}
+
+/* ---------- P3 ---------- */
+function bodyP3() {
+  return `
+  <div class="block three">
+    <div class="panel"><h3 style="margin:0 0 4px;font-size:17px">구매력 하락</h3><p style="margin:0">화폐 가치가 떨어져 같은 돈으로 살 수 있는 상품이 줄어요.</p></div>
+    <div class="panel"><h3 style="margin:0 0 4px;font-size:17px">생산 둔화</h3><p style="margin:0">원료·임금 등 생산 요소 가격이 올라 기업이 생산을 줄여요.</p></div>
+    <div class="panel"><h3 style="margin:0 0 4px;font-size:17px">불공평한 재분배</h3><p style="margin:0">누구는 앉아서 이득을 보고, 누구는 앉아서 손해를 봐요.</p></div>
+  </div>
+  <div class="block panel" style="background:var(--blue-soft);border-color:transparent">
+    <b>생각의 열쇠</b> 1년 뒤에 100만 원을 갚기로 했는데 그사이 물가가 10% 올랐다면? 100만 원의 숫자는 그대로지만 그 돈으로 살 수 있는 물건은 줄었어요. 갚는 사람은 ‘가치가 줄어든 돈’으로 갚는 셈이에요.
+  </div>
+  ${clsHTML('who')}`;
+}
+
+/* ---------- P4: rate game ---------- */
+let RG;
+function rgReset() { RG = { round: 0, max: 5, rate: 1.0, infl: 6.0, unemp: 3.0, hist: [{ rate: 1.0, infl: 6.0, unemp: 3.0 }], news: [] }; }
+function bodyP4() {
+  return `
+  <div class="block panel">
+    <h3 style="margin-top:0">기준 금리를 올리면 생기는 일</h3>
+    <div class="flow"><span>기준 금리 인상</span><i>→</i><span>대출 이자↑ · 예금 이자↑</span><i>→</i><span>소비·투자↓ 저축↑</span><i>→</i><span>전체 수요↓</span><i>→</i><span class="end">물가 안정</span></div>
+    <div class="flow" style="margin-top:10px"><i>하지만</i><span class="warn">경기 둔화</span><i>→</i><span class="warn">기업 채용↓</span><i>→</i><span class="warn">실업↑ 가능</span></div>
+    <p class="note">경기가 너무 나쁠 때는 반대로 금리를 내려 소비와 투자를 살려요.</p>
+  </div>
+  <div class="block">
+    <h3>금리 조절실: 5번의 결정으로 물가를 잡아라</h3>
+    <p style="margin-top:0">지금 물가 상승률은 6%, 기준 금리는 1%예요. 목표는 <b>물가 상승률 2% 근처(1.5~2.8%)</b>, 그러면서 <b>실업률 4.5% 이하</b>를 지키는 것. 한 번의 결정은 반년이에요.</p>
+    <div class="panel game req" id="rg"></div>
+    <p class="note">학습용으로 아주 단순하게 만든 모형이에요. 실제 경제에서는 금리의 효과가 나타나기까지 시간이 걸리고, 유가·환율 같은 다른 요인도 함께 영향을 줘요.</p>
+  </div>
+  <div class="block panel" style="border-left:6px solid var(--blue)">
+    <h3 style="margin-top:0">실제 사례: 2021~2023년 우리나라</h3>
+    <p style="margin:0">코로나19 이후 경기가 회복되고 국제 원자재 가격이 뛰면서 물가가 빠르게 올랐어요. 2022년 7월 소비자 물가 상승률은 6.3%로 외환 위기 이후 가장 높았어요. 한국은행은 2021년 8월 0.5%였던 기준 금리를 여러 차례 올려 2023년 1월 3.5%까지 높였어요. 그 결과 물가 상승세는 점차 꺾였지만, 대출 이자 부담이 커져 가계와 기업이 어려움을 겪기도 했어요.</p>
+  </div>
+  ${mcqHTML('p4q')}`;
+}
+function mountP4() { rgReset(); rgDraw(); }
+function rgChart() {
+  const W = 300, H = 120, px = i => 24 + i * ((W - 34) / RG.max), py = v => H - 14 - clamp(v, 0, 8) * ((H - 24) / 8);
+  const line = (k, c) => `<polyline fill="none" stroke="${c}" stroke-width="2.5" points="${RG.hist.map((h, i) => px(i) + ',' + py(h[k])).join(' ')}"/>` +
+    RG.hist.map((h, i) => `<circle cx="${px(i)}" cy="${py(h[k])}" r="3" fill="${c}"/>`).join('');
+  return `<svg style="display:block;width:100%;max-width:520px" viewBox="0 0 ${W} ${H}" role="img" aria-label="라운드별 기준 금리와 물가 상승률">
+    <rect x="24" y="${py(2.8)}" width="${W - 34}" height="${py(1.5) - py(2.8)}" fill="var(--green-soft)"/>
+    ${[0, 2, 4, 6, 8].map(v => `<text x="2" y="${py(v) + 4}" font-size="10" fill="var(--muted)">${v}%</text><line x1="24" x2="${W - 10}" y1="${py(v)}" y2="${py(v)}" stroke="var(--line)" stroke-width="1"/>`).join('')}
+    ${line('rate', 'var(--blue)')}${line('infl', 'var(--red)')}${line('unemp', 'var(--gold)')}
+  </svg>`;
+}
+function rgDraw() {
+  const el = $('#rg'); if (!el) return;
+  const fin = RG.round >= RG.max;
+  const ic = RG.infl > 2.8 ? 'alert' : RG.infl >= 1.5 ? 'good' : 'alert';
+  const uc = RG.unemp > 4.5 ? 'alert' : 'good';
+  const moves = [[-1, '1%p 인하', 'dn'], [-0.5, '0.5%p 인하', 'dn'], [0, '동결', ''], [0.5, '0.5%p 인상', 'up'], [1, '1%p 인상', 'up'], [1.5, '1.5%p 인상', 'up']];
+  let verdict = '';
+  if (fin) {
+    const win = RG.infl >= 1.5 && RG.infl <= 2.8 && RG.unemp <= 4.5;
+    let msg;
+    if (win) msg = '성공! 물가를 목표 근처로 낮추면서 일자리도 지켰어요. 물가가 잡히기 시작하면 금리를 다시 조금 낮추는 것이 요령이에요.';
+    else if (RG.infl > 2.8) msg = '아직 물가가 높아요. 금리를 너무 늦게, 혹은 너무 조금 올렸어요. 돈을 빌리기 쉬운 상태가 계속되면 수요가 줄지 않아요.';
+    else if (RG.unemp > 4.5) msg = '물가는 잡혔지만 금리를 너무 세게 올려 경기가 얼어붙었어요. 실업이 늘었어요.';
+    else msg = '물가가 목표보다 너무 낮아졌어요. 경기가 식고 있다는 신호예요. 물가가 잡히기 시작할 때 금리를 낮췄어야 해요.';
+    verdict = `<div class="verdict ${win ? 'win' : 'lose'}">${msg}</div>
+      <p style="margin:12px 0 0"><button class="btn ghost" data-act="rgreset">다시 해 보기</button></p>`;
+  }
+  el.innerHTML = `
+    <p style="margin:0 0 10px;font-weight:700">${fin ? '결과' : `${RG.round + 1}번째 결정 (${RG.max}번 중)`}</p>
+    <div class="meters">
+      <div class="meter"><small>기준 금리</small><b>${RG.rate.toFixed(1)}%</b><em>내가 정하는 값</em></div>
+      <div class="meter ${ic}"><small>물가 상승률</small><b>${RG.infl.toFixed(1)}%</b><em>목표 2% 근처</em></div>
+      <div class="meter ${uc}"><small>실업률</small><b>${RG.unemp.toFixed(1)}%</b><em>4.5% 이하 유지</em></div>
+    </div>
+    ${RG.news.length ? `<div class="news"><b>뉴스</b> ${RG.news.at(-1)}</div>` : '<div class="news"><b>뉴스</b> 장바구니 물가가 들썩이고 있어요. 금리가 낮아 대출을 받아 소비하는 사람도 많아요.</div>'}
+    ${fin ? '' : `<div class="moves">${moves.map(([d, l, c]) => `<button class="${c}" data-act="rg" data-d="${d}">${l}</button>`).join('')}</div>`}
+    ${rgChart()}
+    <div class="legend"><span><i style="background:var(--blue)"></i>기준 금리</span><span><i style="background:var(--red)"></i>물가 상승률</span><span><i style="background:var(--gold)"></i>실업률</span><span><i style="background:var(--green-soft);height:10px"></i>물가 목표 범위</span></div>
+    ${verdict}`;
+  if (fin) { el.classList.add('solved'); checkStep(); }
+}
+function rgMove(d) {
+  if (RG.round >= RG.max) return;
+  const oldI = RG.infl, oldU = RG.unemp;
+  RG.rate = clamp(RG.rate + d, 0, 8);
+  RG.infl = r1(clamp(RG.infl - 0.8 * (RG.rate - 2.0), -1, 12));
+  RG.unemp = r1(clamp(RG.unemp + 0.4 * (RG.rate - 2.5), 2.5, 10));
+  let n;
+  if (RG.infl > oldI + 0.2) n = '물가 상승세가 더 거세졌어요. 금리가 낮아 돈을 빌리기 쉬우니 소비가 계속 늘고 있어요.';
+  else if (RG.infl < 1.0) n = '물가가 너무 낮아졌어요. 사람들이 지갑을 닫고 가게 매출이 줄고 있어요.';
+  else if (RG.infl < oldI - 0.2) n = '대출 이자가 올라 소비와 기업 투자가 줄었어요. 물가 상승세가 꺾이고 있어요.';
+  else n = '물가 흐름에 큰 변화가 없어요.';
+  if (RG.unemp > 4.5) n += ' 공장 가동이 줄고 채용이 얼어붙어 실업자가 늘고 있어요!';
+  else if (RG.unemp > oldU + 0.15) n += ' 기업들이 채용을 조금씩 줄이고 있어요.';
+  RG.news.push(n);
+  RG.hist.push({ rate: RG.rate, infl: RG.infl, unemp: RG.unemp });
+  RG.round++;
+  rgDraw();
+}
+
+/* ---------- P5 ---------- */
+function bodyP5() {
+  return `
+  <div class="block panel" style="background:var(--blue-soft);border-color:transparent">
+    <b>교과서 속 사례</b> 외환 위기 때 우리 경제 주체들은 이렇게 대응했어요. 국민은 회사 살리기에 동참하고 과소비를 자제했고, 기업은 연구 개발에 힘쓰며 가격 상승을 자제하고 일자리를 제공했어요. 정부는 물가 안정 정책을 실시했어요.
+  </div>
+  ${clsHTML('actors')}`;
+}
+
+/* ---------- P6 ---------- */
+const ASSETS = [
+  ['현금', '가치가 물가 오른 만큼 그대로 줄어요.', '당장 쓸 돈은 필요하지만, 오래 쌓아 두면 손해예요.'],
+  ['예금·적금', '원금이 보장되고 안전해요. 물가를 잡으려 금리가 오르면 이자도 늘어요.', '예금 금리가 물가보다 낮으면 실제 가치는 줄어요.'],
+  ['금', '물가가 오를 때 가치를 저장하는 수단으로 많이 찾아요.', '이자가 없고, 가격이 크게 오르내릴 수 있어요.'],
+  ['부동산', '물가와 함께 가격과 임대료가 오르는 경향이 있어요.', '큰돈이 필요하고 쉽게 팔기 어려워요. 금리가 오르면 대출 부담이 커져요.'],
+  ['주식', '제품 가격을 올릴 수 있는 기업은 이익이 늘 수 있어요.', '금리 인상기에는 주가가 흔들리기도 해요. 원금을 잃을 위험이 있어요.']
+];
+function bodyP6() {
+  return `
+  <div class="block panel">
+    <div class="ctrls">
+      <label>예금 금리 (1년) <b id="p6i">3%</b><input type="range" id="p6int" min="0" max="8" step="0.5" value="3" aria-label="예금 금리"></label>
+      <label>물가 상승률 (1년) <b id="p6p">5%</b><input type="range" id="p6inf" min="0" max="10" step="0.5" value="5" aria-label="물가 상승률"></label>
+    </div>
+    <div class="rows" id="p6out"></div>
+    <div class="realrate" id="p6real"></div>
+  </div>
+  <div class="block">
+    <h3>물가가 오를 때 사람들이 고민하는 곳들</h3>
+    <div class="three">${ASSETS.map(([n, p, w]) => `<div class="panel asset"><h4>${n}</h4><p class="plus">${p}</p><p class="warn">${w}</p></div>`).join('')}</div>
+    <p class="note">‘이것만 사면 된다’는 정답은 없어요. 안전성(원금을 잃지 않는가), 수익성(얼마나 불어나는가), 유동성(필요할 때 바로 현금으로 바꿀 수 있는가)을 함께 따져, 여러 곳에 나누어 담는 것(분산 투자)이 기본이에요.</p>
+  </div>
+  ${mcqHTML('p6q')}
+  ${mcqHTML('p6q2')}`;
+}
+function mountP6() {
+  const upd = () => {
+    const i = +$('#p6int').value, p = +$('#p6inf').value;
+    $('#p6i').textContent = i + '%'; $('#p6p').textContent = p + '%';
+    const cashReal = 100 / (1 + p / 100), dep = 100 * (1 + i / 100), depReal = dep / (1 + p / 100);
+    const row = (n, a, b) => `<div class="rowc"><span><b style="font-size:16px">${n}</b><small>100만 원</small></span>
+      <span><small>1년 뒤 통장 숫자</small><b>${a.toFixed(1)}만 원</b></span>
+      <span><small>실제 가치 (지금 기준)</small><b style="color:${b < 100 ? 'var(--red)' : 'var(--green)'}">${b.toFixed(1)}만 원</b></span></div>`;
+    $('#p6out').innerHTML = row('현금 보관', 100, cashReal) + row('예금', dep, depReal);
+    const rr = i - p;
+    const el = $('#p6real');
+    el.className = 'realrate ' + (rr < 0 ? 'neg' : 'pos');
+    el.innerHTML = `실질 금리 ≈ ${i}% − ${p}% = <b>${rr > 0 ? '+' : ''}${rr.toFixed(1)}%</b>. ` +
+      (rr < 0 ? '통장의 숫자는 늘어도 실제로 살 수 있는 물건은 줄어요. 돈을 빌린 사람에게는 유리한 상황이에요.'
+        : rr === 0 ? '이자가 물가 상승을 겨우 따라잡아 실제 가치가 그대로예요.'
+          : '이자가 물가보다 커서 실제 가치도 늘어요. 금리가 높은 시기에는 예금이 매력적이에요.');
+  };
+  $('#p6int').addEventListener('input', upd);
+  $('#p6inf').addEventListener('input', upd);
+  upd();
+}
+
+/* ---------- X1 ---------- */
+function bodyX1() {
+  return `
+  <div class="block analogy">
+    <div><span>시장에서</span><b>사과 1개 = 1,300원</b><span>사과의 가격</span></div>
+    <div><span>외환 시장에서</span><b>1달러 = 1,300원</b><span>달러의 가격 = 환율</span></div>
+  </div>
+  <p>사과 값이 오르면 같은 돈으로 사과를 덜 사듯, 환율이 오르면 같은 원화로 달러를 덜 사요. 원화의 힘(가치)이 약해진 거예요.</p>
+  <div class="block panel">
+    <div class="ctrls" style="grid-template-columns:1fr">
+      <label>환율을 움직여 보세요 <b id="x1v">1달러 = 1,300원</b><input type="range" id="x1r" min="900" max="2000" step="10" value="1300" aria-label="환율"></label>
+    </div>
+    <div class="fxgrid">
+      <div>
+        <p class="stat">1달러를 사려면 <b id="x1a">1,300원</b></p>
+        <p class="stat">10만 원을 달러로 바꾸면 <b id="x1b">약 76.9달러</b></p>
+        <p class="stat">원화 가치 지수 (1,300원일 때 100) <b id="x1c">100</b></p>
+        <div class="status eq" id="x1s"></div>
+      </div>
+      <svg viewBox="0 0 320 180" role="img" aria-label="환율과 원화 가치 시소">
+        <polygon points="160,112 138,160 182,160" fill="var(--ink)"/>
+        <rect x="40" y="160" width="240" height="5" rx="2" fill="var(--line)"/>
+        <g id="beam" style="transform-origin:160px 108px">
+          <rect x="30" y="104" width="260" height="8" rx="4" fill="var(--ink)"/>
+          <circle cx="58" cy="78" r="28" fill="var(--red)"/>
+          <text x="58" y="84" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">환율</text>
+          <circle cx="262" cy="78" r="28" fill="var(--green)"/>
+          <text x="262" y="76" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">원화</text>
+          <text x="262" y="92" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">가치</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+  ${mcqHTML('x1q')}
+  ${mcqHTML('x1q2')}`;
+}
+function mountX1() {
+  const upd = () => {
+    const v = +$('#x1r').value;
+    $('#x1v').textContent = `1달러 = ${fmt(v)}원`;
+    $('#x1a').textContent = fmt(v) + '원';
+    $('#x1b').textContent = '약 ' + (100000 / v).toFixed(1) + '달러';
+    $('#x1c').textContent = Math.round(1300 / v * 100);
+    const ang = clamp((v - 1300) / 700 * 18, -16, 16);
+    $('#beam').style.transform = `rotate(${ang}deg)`;
+    const s = $('#x1s');
+    if (v > 1300) { s.className = 'status up'; s.innerHTML = `환율 상승 (원화 약세). 1,300원일 때보다 1달러를 사는 데 ${fmt(v - 1300)}원이 더 들어요. 달러 가치는 오르고, 원화 가치는 떨어졌어요.`; }
+    else if (v < 1300) { s.className = 'status dn'; s.innerHTML = `환율 하락 (원화 강세). 1,300원일 때보다 ${fmt(1300 - v)}원 적게 내고 1달러를 살 수 있어요. 원화 가치가 올랐어요.`; }
+    else { s.className = 'status eq'; s.innerHTML = '기준 환율이에요. 슬라이더를 좌우로 움직이면 시소가 어떻게 기우는지 보세요.'; }
+  };
+  $('#x1r').addEventListener('input', upd);
+  upd();
+}
+
+/* ---------- X2: supply-demand ---------- */
+let SD = { d: 0, s: 0, msg: '' };
+function bodyX2() {
+  return `
+  <div class="block two">
+    <div class="panel why d"><h3>외화 수요 (달러가 필요할 때)</h3>
+      <ul class="plain"><li>외국 상품 수입</li><li>해외여행, 해외 유학·송금</li><li>우리 기업·국민의 해외 투자</li><li>외국인 투자자의 자금 회수</li></ul></div>
+    <div class="panel why s"><h3>외화 공급 (달러가 들어올 때)</h3>
+      <ul class="plain"><li>우리 상품 수출</li><li>외국인 관광객의 국내 소비</li><li>외국인의 국내 투자</li><li>해외에서 번 돈의 국내 송금</li></ul></div>
+  </div>
+  <div class="block panel">
+    <h3 style="margin-top:0">버튼을 눌러 곡선을 움직여 보세요</h3>
+    <div class="sdwrap">
+      <div id="sdg"></div>
+      <div>
+        <div class="sdbtns">
+          <button class="d" data-act="sd" data-k="d" data-v="12">외화 수요 증가</button>
+          <button class="d" data-act="sd" data-k="d" data-v="-12">외화 수요 감소</button>
+          <button class="s" data-act="sd" data-k="s" data-v="12">외화 공급 증가</button>
+          <button class="s" data-act="sd" data-k="s" data-v="-12">외화 공급 감소</button>
+        </div>
+        <p style="margin:10px 0 0"><button class="btn ghost" data-act="sdreset">처음 상태로</button></p>
+        <div class="sdlog" id="sdlog"></div>
+      </div>
+    </div>
+  </div>
+  ${mcqHTML('x2q')}`;
+}
+function mountX2() { SD = { d: 0, s: 0, msg: '처음 상태예요. 외화 수요와 공급이 만나는 점에서 환율 1,300원이 정해졌어요.' }; sdDraw(); }
+function sdDraw() {
+  const P = (100 + SD.d - SD.s) / 2, Q = P + SD.s, won = 900 + 8 * P;
+  const X = q => 46 + q * 2.6, Y = p => 230 - p * 2.0;
+  const dl = [[100 + SD.d, 0], [SD.d, 100]], sl = [[SD.s, 0], [100 + SD.s, 100]];
+  const ln = (pts, c) => `<line x1="${X(pts[0][0])}" y1="${Y(pts[0][1])}" x2="${X(pts[1][0])}" y2="${Y(pts[1][1])}" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>`;
+  const base = SD.d || SD.s ? `<line x1="${X(100)}" y1="${Y(0)}" x2="${X(0)}" y2="${Y(100)}" stroke="var(--line)" stroke-width="2" stroke-dasharray="5 5"/><line x1="${X(0)}" y1="${Y(0)}" x2="${X(100)}" y2="${Y(100)}" stroke="var(--line)" stroke-width="2" stroke-dasharray="5 5"/>` : '';
+  const diff = won - 1300, lx = Math.min(X(Q) + 10, 258);
+  $('#sdg').innerHTML = `<svg viewBox="0 0 360 270" role="img" aria-label="외환 시장 수요 공급 그래프, 현재 환율 ${fmt(won)}원">
+    <defs><clipPath id="plot"><rect x="46" y="30" width="260" height="200"/></clipPath></defs>
+    <line x1="46" y1="230" x2="320" y2="230" stroke="var(--ink)" stroke-width="1.5"/>
+    <line x1="46" y1="230" x2="46" y2="20" stroke="var(--ink)" stroke-width="1.5"/>
+    <text x="50" y="16" font-size="12" fill="var(--muted)">환율(원/달러)</text>
+    <text x="318" y="250" font-size="12" fill="var(--muted)" text-anchor="end">외화 거래량</text>
+    <g clip-path="url(#plot)">${base}${ln(dl, 'var(--red)')}${ln(sl, 'var(--blue)')}</g>
+    <line x1="46" y1="${Y(P)}" x2="${X(Q)}" y2="${Y(P)}" stroke="var(--ink)" stroke-dasharray="4 4"/>
+    <circle cx="${X(Q)}" cy="${Y(P)}" r="7" fill="var(--gold)" stroke="var(--ink)" stroke-width="2"/>
+    <rect x="${lx}" y="${Y(P) - 30}" width="96" height="24" rx="6" fill="var(--ink)"/>
+    <text x="${lx + 48}" y="${Y(P) - 13}" text-anchor="middle" font-size="13" font-weight="700" fill="var(--paper)">${fmt(won)}원</text>
+    <text x="${clamp(X(SD.d + 6), 52, 300)}" y="${Y(94)}" font-size="12" font-weight="700" fill="var(--red)">수요</text>
+    <text x="${clamp(X(100 + SD.s - 18), 52, 300)}" y="${Y(94)}" font-size="12" font-weight="700" fill="var(--blue)">공급</text>
+  </svg>`;
+  $('#sdlog').innerHTML = `<b>환율 ${fmt(won)}원</b> ${diff > 0 ? `(처음보다 ${fmt(diff)}원 상승 · 원화 가치 하락)` : diff < 0 ? `(처음보다 ${fmt(-diff)}원 하락 · 원화 가치 상승)` : ''}<br>${SD.msg}`;
+}
+const SDMSG = {
+  'd12': '예: 해외여행·수입·유학 송금이 늘었어요. 수요 곡선이 오른쪽으로 이동하고 환율이 올라요.',
+  'd-12': '예: 해외여행과 수입이 줄었어요. 수요 곡선이 왼쪽으로 이동하고 환율이 내려요.',
+  's12': '예: 수출과 외국인 관광객이 늘었어요. 공급 곡선이 오른쪽으로 이동하고 환율이 내려요.',
+  's-12': '예: 수출이 줄고 외국인 투자가 끊겼어요. 공급 곡선이 왼쪽으로 이동하고 환율이 올라요.'
+};
+
+/* ---------- X4 ---------- */
+function bodyX4() {
+  return `
+  <div class="block panel">
+    <div class="ctrls" style="grid-template-columns:1fr">
+      <label>환율 <b id="x4v">1달러 = 1,300원</b><input type="range" id="x4r" min="1000" max="1600" step="10" value="1300" aria-label="환율"></label>
+    </div>
+    <div class="calc" id="x4c"></div>
+    <p class="note">1달러 = 1,300원일 때와 비교한 결과예요.</p>
+  </div>
+  <div class="block">
+    <h3>한눈에 정리</h3>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>환율 상승 (원화 가치↓)</th><th>환율 하락 (원화 가치↑)</th></tr></thead>
+      <tbody>
+        <tr><th>수출</th><td class="dn">달러 표시 가격↓ → 유리</td><td class="up">달러 표시 가격↑ → 불리</td></tr>
+        <tr><th>수입</th><td class="up">수입품 원화 가격↑ → 불리</td><td class="dn">수입품 원화 가격↓ → 유리</td></tr>
+        <tr><th>해외여행·유학</th><td class="up">비용 증가</td><td class="dn">비용 감소</td></tr>
+        <tr><th>달러 빚 갚기</th><td class="up">부담 증가</td><td class="dn">부담 감소</td></tr>
+        <tr><th>국내 물가</th><td class="up">상승 압력</td><td class="dn">안정 요인</td></tr>
+      </tbody></table></div>
+  </div>
+  ${mcqHTML('x4q')}`;
+}
+function mountX4() {
+  const B = 1300;
+  const upd = () => {
+    const v = +$('#x4r').value;
+    $('#x4v').textContent = `1달러 = ${fmt(v)}원`;
+    const up = v > B, eq = v === B;
+    const badge = good => eq ? '<span class="badge n">기준</span>' : good ? '<span class="badge g">유리</span>' : '<span class="badge b">불리</span>';
+    const car = 30000000 / v, carB = 30000000 / B;
+    const hotel = 200 * v, oil = 80 * v, debt = 10000000 * v / 1e8;
+    const ch = (a, b, unit, dec = 0) => eq ? '' : `기준보다 ${a > b ? '+' : '−'}${(Math.abs(a - b)).toLocaleString('ko-KR', { maximumFractionDigits: dec })}${unit}`;
+    $('#x4c').innerHTML = `
+      <div class="ccard"><h4>수출 기업</h4><p style="margin:0;font-size:14px">3,000만 원짜리 국산 자동차의 미국 판매 가격</p>
+        <div class="v">약 ${fmt(car)}달러</div><div class="chg">${ch(car, carB, '달러')}</div>${badge(up)}</div>
+      <div class="ccard"><h4>해외여행 가족</h4><p style="margin:0;font-size:14px">미국 숙소 1박 200달러를 원화로 내면</p>
+        <div class="v">${fmt(hotel)}원</div><div class="chg">${ch(hotel, 200 * B, '원')}</div>${badge(!up)}</div>
+      <div class="ccard"><h4>원유 수입 회사</h4><p style="margin:0;font-size:14px">원유 1배럴 80달러를 원화로 내면</p>
+        <div class="v">${fmt(oil)}원</div><div class="chg">${ch(oil, 80 * B, '원')}</div>${badge(!up)}<p class="chg" style="margin:6px 0 0">${eq ? '' : up ? '기름값·전기 요금이 올라 국내 물가 상승 압력이 커져요.' : '원가가 줄어 국내 물가 안정에 도움이 돼요.'}</p></div>
+      <div class="ccard"><h4>달러 빚이 있는 기업</h4><p style="margin:0;font-size:14px">갚아야 할 1,000만 달러를 원화로 환산하면</p>
+        <div class="v">${debt.toFixed(0)}억 원</div><div class="chg">${ch(debt, 10000000 * B / 1e8, '억 원')}</div>${badge(!up)}</div>`;
+  };
+  $('#x4r').addEventListener('input', upd);
+  upd();
+}
+
+/* ---------- X5 timeline ---------- */
+function bodyX5() {
+  return `
+  <div class="block tl req" id="tl">
+    ${TIMELINE.map((e, i) => `
+    <div class="ev" data-i="${i}">
+      <div class="yr display">${e.y}</div>
+      <div class="panel">
+        <h4>${e.h}</h4>
+        <p>${e.s}</p>
+        <p style="font-weight:700;margin-bottom:8px">이때 원/달러 환율은 어떻게 되었을까?</p>
+        <div class="choices"><button class="chip" data-act="tl" data-g="up">올랐다 (원화 가치↓)</button><button class="chip" data-act="tl" data-g="dn">내렸다 (원화 가치↑)</button></div>
+        <div class="res" hidden></div>
+      </div>
+    </div>`).join('')}
+  </div>
+  <p class="note">환율 수치는 그 시기의 대략적인 값이에요.</p>`;
+}
+function tlAnswer(ev, g) {
+  if (ev.classList.contains('revealed')) return;
+  const e = TIMELINE[+ev.dataset.i], ok = g === e.a;
+  ev.classList.add('revealed', e.a);
+  $$('.chip', ev).forEach(b => { b.disabled = true; if (b.dataset.g === e.a) b.classList.add('right'); else if (b.dataset.g === g) b.classList.add('wrong'); });
+  const r = $('.res', ev);
+  r.hidden = false;
+  r.innerHTML = `<b style="color:${ok ? 'var(--green)' : 'var(--red)'}">${ok ? '예측 성공!' : '예측과 달랐어요.'}</b> <span class="rate">${e.r}</span><br>${e.l}`;
+  if ($$('#tl .ev').every(x => x.classList.contains('revealed'))) { $('#tl').classList.add('solved'); checkStep(); }
+}
+
+/* ---------- C1 challenge ---------- */
+let CH;
+function chReset() { CH = { si: 0, qi: 0, first: true, score: 0, chain: [], fb: '', fbOk: true, done: false }; }
+function bodyC1() { return `<div class="block req" id="ch"></div>`; }
+function mountC1() { chReset(); chDraw(); }
+const CH_TOTAL = CHALLENGE.reduce((a, c) => a + c.qs.length, 0);
+function chDraw() {
+  const el = $('#ch'); if (!el) return;
+  if (CH.done) {
+    const pct = Math.round(CH.score / CH_TOTAL * 100);
+    if (progress.chBest == null || CH.score > progress.chBest) { progress.chBest = CH.score; saveProgress(); }
+    const msg = pct >= 85 ? '물가와 환율의 연결 고리를 아주 잘 이해하고 있어요!' : pct >= 60 ? '대부분 잘 연결했어요. 틀린 고리가 있던 단계를 다시 보면 완벽해져요.' : '헷갈리는 고리가 있었어요. 2부 1~3단계를 복습하고 다시 도전해 보세요.';
+    el.innerHTML = `<div class="scn"><div class="scn-top"><span>챌린지 결과</span><span>${CHALLENGE.length}개 사례 완료</span></div>
+      <div class="scn-body final">${profile ? `<p class="who">${esc(profileLabel())}</p>` : ''}<p class="note" style="margin:0 0 8px">${new Date().toLocaleDateString('ko-KR')}</p><p style="margin:0">처음 시도에 맞힌 고리</p><div class="big display">${CH.score} / ${CH_TOTAL}</div><p>${msg}</p>
+      <button class="btn" data-act="chreset">처음부터 다시</button></div></div>`;
+    el.classList.add('solved'); checkStep();
+    return;
+  }
+  const sc = CHALLENGE[CH.si], q = sc.qs[CH.qi];
+  const links = sc.qs.map((x, i) => i < CH.chain.length ? `<span>${CH.chain[i]}</span>` : `<span class="todo">?</span>`).join('<i>→</i>');
+  el.innerHTML = `<div class="scn">
+    <div class="scn-top"><span>사례 ${CH.si + 1} / ${CHALLENGE.length}</span><span>처음 시도 정답 ${CH.score}</span></div>
+    <div class="scn-body">
+      <p class="scn-news">${sc.t}</p>
+      <div class="links" aria-label="생각의 사슬">${links}</div>
+      ${CH.fb ? `<p class="fb ${CH.fbOk ? 'good' : 'bad'}" style="margin:0 0 14px">${CH.fb}</p>` : ''}
+      ${q ? `<p class="cq">${CH.qi + 1}. ${q.q}</p>
+        <div class="opts">${q.o.map((o, i) => `<button class="opt" data-act="ch" data-i="${i}">${o}</button>`).join('')}</div>`
+      : `<button class="btn" data-act="chnext">${CH.si < CHALLENGE.length - 1 ? '다음 사례' : '결과 보기'}</button>`}
+    </div></div>`;
+}
+function chAnswer(i) {
+  const q = CHALLENGE[CH.si].qs[CH.qi];
+  if (i === q.a) {
+    if (CH.first) CH.score++;
+    CH.chain.push(q.s); CH.fb = q.e; CH.fbOk = true; CH.qi++; CH.first = true;
+  } else {
+    CH.first = false; CH.fbOk = false; CH.fb = `‘${q.o[i]}’은(는) 아니에요. 다시 생각해 보세요.`;
+  }
+  chDraw();
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click', e => {
+  const t = e.target.closest('button'); if (!t) return;
+  const act = t.dataset.act;
+  if (act === 'home') { cur = { p: -1, s: 0 }; renderStep(); window.scrollTo({ top: 0 }); return; }
+  if (act === 'profile' || act === 'pedit') { openProfile(); return; }
+  if (act === 'psave') { doSave(); return; }
+  if (act === 'pcancel') { editingProfile = false; renderStep(); return; }
+  if (act === 'part') { if (!profile) { openProfile('학습을 시작하려면 먼저 내 정보를 입력해 주세요.'); return; } const p = +t.dataset.p; const st = PARTS[p].steps.findIndex(s => !progress[s.id]); go(p, st < 0 ? 0 : st); return; }
+  if (act === 'go') { go(+t.dataset.p, +t.dataset.s); return; }
+  if (act === 'next') { const P = PARTS[cur.p]; if (cur.s < P.steps.length - 1) go(cur.p, cur.s + 1); else go(cur.p + 1, 0); return; }
+  if (act === 'prev') { if (cur.s > 0) go(cur.p, cur.s - 1); else go(cur.p - 1, PARTS[cur.p - 1].steps.length - 1); return; }
+  if (act === 'rg') { rgMove(+t.dataset.d); return; }
+  if (act === 'rgreset') { rgReset(); $('#rg').classList.remove('solved'); rgDraw(); return; }
+  if (act === 'sd') { const k = t.dataset.k, v = +t.dataset.v; SD[k] = clamp(SD[k] + v, -36, 36); SD.msg = SDMSG[k + v]; sdDraw(); return; }
+  if (act === 'sdreset') { mountX2(); return; }
+  if (act === 'tl') { tlAnswer(t.closest('.ev'), t.dataset.g); return; }
+  if (act === 'ch') { chAnswer(+t.dataset.i); return; }
+  if (act === 'chnext') { CH.si++; CH.qi = 0; CH.chain = []; CH.fb = ''; CH.first = true; if (CH.si >= CHALLENGE.length) CH.done = true; chDraw(); return; }
+  if (act === 'chreset') { $('#ch').classList.remove('solved'); chReset(); chDraw(); return; }
+
+  // multiple choice
+  const mq = t.closest('.mcq');
+  if (mq && t.classList.contains('opt')) {
+    const m = MCQ[mq.dataset.q], i = +t.dataset.i, fb = $('.fb', mq);
+    fb.hidden = false;
+    if (i === m.a) {
+      t.classList.add('right'); $$('.opt', mq).forEach(b => b.disabled = true);
+      fb.className = 'fb good'; fb.textContent = m.e; mq.classList.add('solved'); checkStep();
+    } else {
+      t.classList.add('wrong'); t.disabled = true;
+      fb.className = 'fb bad'; fb.textContent = '아쉬워요. 다른 답을 골라 보세요.';
+    }
+    return;
+  }
+  // classification
+  const cs = t.closest('.case');
+  if (cs && t.classList.contains('chip')) {
+    const box = t.closest('.cls'), set = SETS[box.dataset.set], it = set.items[+cs.dataset.i], fb = $('.fb', cs);
+    fb.hidden = false;
+    if (t.dataset.c === it.a) {
+      t.classList.add('right'); $$('.chip', cs).forEach(b => b.disabled = true); cs.classList.add('ok');
+      fb.className = 'fb good'; fb.textContent = it.e;
+      const n = $$('.case.ok', box).length;
+      $('.score', box).textContent = `${n} / ${set.items.length}`;
+      if (n === set.items.length) { box.classList.add('solved'); checkStep(); }
+    } else {
+      t.classList.add('wrong'); t.disabled = true;
+      fb.className = 'fb bad'; fb.textContent = '다시 생각해 볼까요? 다른 쪽을 골라 보세요.';
+    }
+  }
+});
+
+renderStep();
+</script>
+</body>
+</html>
